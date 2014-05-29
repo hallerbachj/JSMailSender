@@ -11,11 +11,20 @@
 
 @class JSSMTPConnection;
 
+@protocol JSSMTPConnectionDelegate
+@required
+
+-(void)messageResult:(JSSMTPConnection *)message error:(int)error;
+
+@end
 /** JSSMTPConnection objects are meant to be one-use objects used to send mail. The basic use of this class is
  to populate all the propertes with the necessary values and then send the using the methods mapped to the basic
  SMTP commands.*/
 
 @interface JSSMTPConnection : NSObject <JSStreamOperationDelegate>
+{
+    __unsafe_unretained id <JSSMTPConnectionDelegate> delegate;
+}
 /** @name Properties */
 
 /** The full text of the previous response */
@@ -112,5 +121,6 @@
 /** Sends the LOGIN  password, completing the login process */
 - (void)sendLOGINPassword;
 
+@property(nonatomic, assign) id <JSSMTPConnectionDelegate> delegate;
 
 @end

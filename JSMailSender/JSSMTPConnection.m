@@ -57,6 +57,9 @@
 @synthesize authMethod = _authMethod;
 @synthesize eightBitMime = _eightBitMime;
 
+@synthesize delegate;
+
+
 - (id)initWithRelay:(NSString *)fqdn port:(NSInteger)port recipient:(NSString *)to sender:(NSString *)from message:(NSData *)message
 {
     if ((self = [super init])) {
@@ -109,9 +112,11 @@
             [_fsm enterStartState];
         } else {
             DLog(@"Not ready to begin");
+            [delegate messageResult:self error:0];
             self.beginWhenAvailable = YES;
         }
-    }
+        
+     }
 }
 
 - (void)connect
@@ -262,13 +267,13 @@
                     }
                 }];
             }
-            [_fsm success];
+            [_fsm success];[delegate messageResult:self error:code];
         } else if (code > 99 && code < 200) {
-            [_fsm error];
+            [_fsm error];[delegate messageResult:self error:code];
         } else if (code > 299 && code < 400) {
-            [_fsm success];
+            [_fsm success];[delegate messageResult:self error:code];
         } else if ((code > 300 && code < 600)) {
-            [_fsm failure];
+            [_fsm failure];[delegate messageResult:self error:code];
         }
     }
 }
